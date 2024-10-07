@@ -24,7 +24,6 @@ void printIntro()
     Console.WriteLine("Bulk Git - Bulk git operations for ");
     Console.WriteLine("multiple repositories in a directory");
     Console.WriteLine("      Author: Fatih Bahceci");
-    Console.WriteLine("            2024-10-06");
     Console.WriteLine();
     resetColor();
 }
@@ -223,9 +222,9 @@ return;
 void printHelp()
 {
     Console.ForegroundColor = ConsoleColor.Cyan;
-    Console.WriteLine("Bulk Git - Bulk git operations for multiple repositories in a directory");
+    //Console.WriteLine("Bulk Git - Bulk git operations for multiple repositories in a directory");
     Console.WriteLine();
-    Console.WriteLine("Usage: bulk-git [command] [options]");
+    Console.WriteLine("Usage: gitb [command] [options] [arguments] [where conditions]");
     Console.WriteLine();
     Console.WriteLine("Commands:");
     Console.WriteLine("  pwd         Print current directory");
