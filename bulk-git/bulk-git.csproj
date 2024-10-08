@@ -6,14 +6,33 @@
 		<RootNamespace>bulk_git</RootNamespace>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<OutputPath>d:\bin\</OutputPath>
+		<OutputPath>bin\</OutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<AppendConfigurationToOutputPath>false</AppendConfigurationToOutputPath>
 		<AssemblyName>gitb</AssemblyName>
-		<SelfContained>true</SelfContained>
-		<PublishSingleFile>true</PublishSingleFile>
-		<PublishTrimmed>true</PublishTrimmed>
+		<!--<SelfContained>true</SelfContained>-->
+		<!--<PublishSingleFile>true</PublishSingleFile>-->
+		<!--<PublishTrimmed>true</PublishTrimmed>-->
+		<PublishAot>true</PublishAot>
+		<IsAotCompatible>true</IsAotCompatible>
+		<Version>1.0.3</Version>
+		<Authors>
+			Fatih Bahceci
+		</Authors>
 	</PropertyGroup>
-
 </Project>
+<!--
+///[RN] - Release Note  
+///[BG] - Bug fix  
+///[IN] - Important Note   
+///[EN] - Enhancement:  
+///[RC] - Release Candidate/Release   
+///[OT] - Other commits 
+date: DD.MM.YYYY | name: Project Name | version: X.X.X.XXX | author: Author alias
+    [XX] Description
+
+date: 08.10.2024 | name: bulk-git | version: 1.0.3 | author: Fatih Bahceci
+	[EN] First release of the project.
+	[EN] Added AOT and AOT compatible flags to the project file.
+-->
