@@ -93,86 +93,82 @@ if (whereIndex != -1)
     int waitingFor = 0; // 0: field, 1: condition, 2: value
     while (!isWhereClauseCompleted)
     {
-        if (args[whereIndex] == "and" || args[whereIndex] == "or")
-        {
-            if (waitingFor == 0)
-            {
-                conditionConjunctions.Add(args[whereIndex]);
-                //Remove "and" or "or" from args
-                removeFieldFromArgs();
-                continue;
-            }
-            else
-            {
-                err("and/or");
-                continue;
-            }
-        }
-        else
-        if (acceptedFields.Contains(args[whereIndex]))
-        {
-            if (waitingFor != 0)
-            {
-                err(args[whereIndex]);
-                continue;
-            }
-            field = args[whereIndex];
-            removeFieldFromArgs();//Remove field from args
-            waitingFor = 1;
-        }
-        else if (acceptedConditions.Contains(args[whereIndex]))
-        {
-            if (waitingFor != 1)
-            {
-                err(args[whereIndex]);
-                continue;
-            }
-            condition = args[whereIndex];
-            removeFieldFromArgs();//Remove condition from args
-            waitingFor = 2;
-        }
-        else //This is neither field nor condition
-        {
-            if (waitingFor == 0)
-            {
-                //Then end of the where clause. We can exit the loop and keep args as is for the next steps
-                isWhereClauseCompleted = true;
-                continue;
-            }
-            if (waitingFor != 2)
-            {
-                err(args[whereIndex]);
-                continue;
-            }
-            value = args[whereIndex];
-            if (isFieldsCompleted())
-            {
-                pathConditions.Add((field, condition, value));
-                field = "";
-                condition = "";
-                value = "";
-                waitingFor = 0;
-            }
-            else
-            {
-                err(args[whereIndex]);
-                continue;
-            }
-            removeFieldFromArgs();//Remove value from args
-            waitingFor = 0;
-        }
         if (whereIndex >= args.Length)
         {
             if (waitingFor != 0)
             {
                 //Fields  not completed but end of the args
-                err("end of args");
+                err("but end of args");
                 continue;
             }
             else
             {
                 isWhereClauseCompleted = true;
+                break;
             }
+        }
+        switch (waitingFor)
+        {
+            case 0:
+                if (args[whereIndex] == "and" || args[whereIndex] == "or")
+                {
+                    if (pathConditions.Count == 0)
+                    {
+                        err("condition expected but \"" + args[whereIndex] + "\" found");
+                        continue;
+                    }
+                    else
+                    {
+                        conditionConjunctions.Add(args[whereIndex]);
+                        //Remove "and" or "or" from args
+                        removeFieldFromArgs();
+                        continue;
+                    }
+                }
+                else if (acceptedFields.Contains(args[whereIndex]))
+                {
+                    field = args[whereIndex];
+                    removeFieldFromArgs();//Remove field from args
+                    waitingFor = 1;
+                    continue;
+                }
+                else
+                {
+                    if (pathConditions.Count > 0)
+                    {
+                        //at least one condition is set. So there is no problem
+                        isWhereClauseCompleted = true;
+                        continue;
+                    }
+                    else
+                    {
+                        //First field is not set but not "and" or "or" or field name
+                        err("but \"" + args[whereIndex]  + "\" is not a valid field name");
+                        continue;
+                    }
+                }
+            case 1:
+                if (acceptedConditions.Contains(args[whereIndex]))
+                {
+                    condition = args[whereIndex];
+                    removeFieldFromArgs();//Remove condition from args
+                    waitingFor = 2;
+                }
+                else
+                {
+                    err(args[whereIndex]);
+                    continue;
+                }
+                break;
+            case 2:
+                value = args[whereIndex];
+                pathConditions.Add((field, condition, value));
+                removeFieldFromArgs();//Remove value from args
+                field = "";
+                condition = "";
+                value = "";
+                waitingFor = 0;
+                continue;
         }
     }
     if (!canContinueToTheApp)
@@ -357,7 +353,7 @@ string getCurrentBranchName(string gitDirectory)
 
 string[] _getDirectories()
 {
-    var r =  Directory.GetDirectories(workingDirectory, ".git", SearchOption.AllDirectories).Select(
+    var r = Directory.GetDirectories(workingDirectory, ".git", SearchOption.AllDirectories).Select(
         x => Path.GetDirectoryName(x)!
         ).ToList();
     if (pathConditions.Count > 0)
@@ -381,7 +377,11 @@ string[] _getDirectories()
                 {
                     path = getCurrentBranchName(x);
                 }
-                switch  (condition.condition)
+                else
+                {
+                    throw new Exception("Unknown field: " + condition.field);
+                }
+                switch (condition.condition)
                 {
                     case "ct":
                         matches.Add(path.ToLower().Contains(value.ToLower()));
@@ -407,7 +407,7 @@ string[] _getDirectories()
                     case "!eq":
                         matches.Add(path.ToLower() != value.ToLower());
                         break;
-                        default:
+                    default:
                         throw new Exception("Unknown condition: " + condition.condition);
                 }
 
