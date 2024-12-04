@@ -16,7 +16,7 @@
 		<!--<PublishTrimmed>true</PublishTrimmed>-->
 		<PublishAot>true</PublishAot>
 		<IsAotCompatible>true</IsAotCompatible>
-		<Version>1.0.4</Version>
+		<Version>1.0.5</Version>
 		<Authors>
 			Fatih Bahceci
 		</Authors>
@@ -32,8 +32,10 @@
 date: DD.MM.YYYY | name: Project Name | version: X.X.X.XXX | author: Author alias
     [XX] Description
 
+date: 04.12.2024 | name: bulk-git | version: 1.0.4 | author: Fatih Bahceci
 date: 10.10.2024 | name: bulk-git | version: 1.0.4 | author: Fatih Bahceci
-	[BG] Fixed insufficient check on invalid field name check.
+	[BG] The app hangs when status command is executed without "verbose" parameter.
+	     
 date: 08.10.2024 | name: bulk-git | version: 1.0.3 | author: Fatih Bahceci
 	[EN] First release of the project.
 	[EN] Added AOT and AOT compatible flags to the project file.

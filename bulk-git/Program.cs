@@ -143,7 +143,7 @@ if (whereIndex != -1)
                     else
                     {
                         //First field is not set but not "and" or "or" or field name
-                        err("but \"" + args[whereIndex]  + "\" is not a valid field name");
+                        err("but \"" + args[whereIndex] + "\" is not a valid field name");
                         continue;
                     }
                 }
@@ -302,49 +302,52 @@ void pwd()
     StringBuilder output = new StringBuilder();
     StringBuilder error = new StringBuilder();
 
-    if (printVerbose)
+    //Console.WriteLine($"Pulling {gitDirectory} for branch ({getCurrentBranchName(gitDirectory)})...");
+    process.OutputDataReceived += (sender, data) =>
     {
-        //Console.WriteLine($"Pulling {gitDirectory} for branch ({getCurrentBranchName(gitDirectory)})...");
-        process.OutputDataReceived += (sender, data) =>
+        if (data == null || data.Data == null || data.Data.Trim() == "")
         {
-            if (data == null || data.Data == null || data.Data.Trim() == "")
-            {
-                return;
-            }
+            return;
+        }
+        if (printVerbose)
+        {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("O: " + data.Data);
-            output.AppendLine(data.Data);
             resetColor();
-        };
-        process.ErrorDataReceived += (sender, data) =>
+        }
+        output.AppendLine(data.Data);
+    };
+    process.ErrorDataReceived += (sender, data) =>
+    {
+        if (data == null || data.Data == null || data.Data.Trim() == "")
         {
-            if (data == null || data.Data == null || data.Data.Trim() == "")
-            {
-                return;
-            }
+            return;
+        }
+        if (printVerbose)
+        {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("E: " + data.Data);
-            error.AppendLine(data.Data);
             resetColor();
-        };
-    }
+        }
+        error.AppendLine(data.Data);
+    };
     process.Start();
-    if (printVerbose)
-    {
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
-    }
+    //if (printVerbose)
+    //{
+    process.BeginOutputReadLine();
+    process.BeginErrorReadLine();
+    //}
     process.WaitForExit(); // İşlem tamamlanana kadar bekle
     process.WaitForExit(300); // Asenkron işleyicilerin tamamlanmasını sağlamak için 300 m.saniye daha bekle
 
-    if (printVerbose)
-    {
-        return (process.ExitCode, output.ToString(), error.ToString());
-    }
-    else
-    {
-        return (process.ExitCode, process.StandardOutput.ReadToEnd(), process.StandardError.ReadToEnd());
-    }
+    //if (printVerbose)
+    //{
+    return (process.ExitCode, output.ToString(), error.ToString());
+    //}
+    //else
+    //{
+    //    return (process.ExitCode, process.StandardOutput.ReadToEnd(), process.StandardError.ReadToEnd());
+    //}
 }
 string getCurrentBranchName(string gitDirectory)
 {
@@ -587,21 +590,21 @@ Write-Host "(NP): Not Pushed yet"
     Console.WriteLine("[NP]: Not Pushed yet");
     foreach (var gitDirectory in directories)
     {
-        var uncommitted = runCommand("git", $"-C {gitDirectory} status --porcelain", gitDirectory, false).StdOut.Trim();
+        var uncommitted = runCommand("git", $"-C {gitDirectory} status --porcelain", gitDirectory, _printVerbose).StdOut.Trim();
         if (uncommitted != "")
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"[UC]: {gitDirectory}");
             resetColor();
         }
-        var unversioned = runCommand("git", $"-C {gitDirectory} ls-files --others --exclude-standard", gitDirectory, false).StdOut.Trim();
+        var unversioned = runCommand("git", $"-C {gitDirectory} ls-files --others --exclude-standard", gitDirectory, _printVerbose).StdOut.Trim();
         if (unversioned != "")
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine($"[UV]: {gitDirectory}");
             resetColor();
         }
-        var localCommits = runCommand("git", $"-C {gitDirectory} cherry -v", gitDirectory, false).StdOut.Trim();
+        var localCommits = runCommand("git", $"-C {gitDirectory} cherry -v", gitDirectory, _printVerbose).StdOut.Trim();
         if (localCommits != "" && !localCommits.Contains("Could not find a tracked remote branch"))
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
