@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Text;
 void printIntro()
@@ -216,68 +217,84 @@ switch (args[0])
         printHelp();
         break;
 }
-
-
-
 resetColor();
 return;
+void println(string message = "", ConsoleColor? _color = null, ConsoleColor? _backgroundColor = null)
+{
+    if (_color != null)
+    {
+        Console.ForegroundColor = _color.Value;
+    }
+    if (_backgroundColor != null)
+    {
+        Console.BackgroundColor = _backgroundColor.Value;
+    }
+    Console.WriteLine(message);
+    resetColor();
+}
+void printch(string message = "", ConsoleColor? _color = null, ConsoleColor? _backgroundColor = null)
+{
+    if (_color != null)
+    {
+        Console.ForegroundColor = _color.Value;
+    }
+    if (_backgroundColor != null)
+    {
+        Console.BackgroundColor = _backgroundColor.Value;
+    }
+    Console.Write(message);
+    resetColor();
+}
 void printHelp()
 {
     Console.ForegroundColor = ConsoleColor.Cyan;
     //Console.WriteLine("Bulk Git - Bulk git operations for multiple repositories in a directory");
-    Console.WriteLine();
-    Console.WriteLine("Usage: gitb [command] [options] [arguments] [where conditions]");
-    Console.WriteLine();
-    Console.WriteLine("Commands:");
-    Console.WriteLine("  pwd         Print current directory");
-    Console.WriteLine("  pull        Pull all git repositories in the current directory");
-    Console.WriteLine("  branches    List current branches in the current directory");
-    Console.ForegroundColor = ConsoleColor.DarkGray;
-    Console.WriteLine("    Options:");
-    Console.WriteLine("      --all       Also list all other local branches for each repository");
-    Console.WriteLine("      --fetch     Fetch all branches from remote before list");
-    Console.WriteLine("      -a          [With --all parameter] List all local and remote branches");
-    Console.WriteLine("      -r          [With --all parameter] List remote branches only");
-    Console.ForegroundColor = ConsoleColor.Cyan;
-    Console.WriteLine("  urls        List all urls in the current directory");
-    Console.ForegroundColor = ConsoleColor.DarkGray;
-    Console.WriteLine("    Options:");
-    Console.WriteLine("      --with-directory   Print directory path with urls");
-    Console.ForegroundColor = ConsoleColor.Cyan;
-    Console.WriteLine("  fetch       Fetch all branches in the current directory");
-    Console.WriteLine("  status      Show status of repositories  in the current directory that action needed");
-    Console.WriteLine("  stashes     List reposştories that has stashes with stash names");
-    Console.WriteLine("  switch      Switch all repositories to the given branch");
-    Console.ForegroundColor = ConsoleColor.DarkGray;
-    Console.WriteLine("    Arguments:");
-    Console.WriteLine("      [branchName]   Branch name to switch all repositories");
-    Console.WriteLine();
-    Console.ForegroundColor = ConsoleColor.DarkGray;
-    Console.WriteLine("General Options:");
-    Console.WriteLine("  --verbose   Print verbose output");
-    Console.WriteLine("  --dir [path]   Set working directory");
-    Console.WriteLine("  --where [field] [condition] [value] [and/or] [field] [condition] [value] ...   Filter repositories with conditions");
-    Console.WriteLine("    Fields: path, url, branch");
-    Console.WriteLine("    Conditions: ct (contains), sw (starts with), ew (ends with), eq (equals), !ct (not contains), !sw (not starts with), !ew (not ends with), !eq (not equals)");
-    Console.WriteLine("    Conjunctions: and, or");
-    Console.WriteLine("    The comprassion is not case sensitive.");
-    Console.WriteLine("    Example: --where path eq \"C:\\Projects\" and branch eq \"master\" or url sw \"http//\"");
-    Console.WriteLine();
-    Console.ForegroundColor = ConsoleColor.Yellow;
-    Console.WriteLine("Examples:");
-    Console.WriteLine("  bulk-git pull --verbose");
-    Console.WriteLine("  bulk-git branches");
-    Console.WriteLine("  bulk-git branches --all");
-    Console.WriteLine("  bulk-git branches --all --fetch");
-    Console.WriteLine("  bulk-git branches -a");
-    Console.WriteLine("  bulk-git branches -r");
-    Console.WriteLine("  bulk-git branches --all -a");
-    Console.WriteLine("  bulk-git branches --all -a --fetch");
-    Console.WriteLine("  bulk-git branches --all -r");
-    Console.WriteLine("  bulk-git urls --with-directory");
-    Console.WriteLine("  bulk-git fetch");
-    Console.WriteLine(@"  bulk-git status --dir ""C:\Path to working directory\sources""");
-    Console.WriteLine();
+    println();
+    println("Usage: gitb [command] [options] [arguments] [where conditions]");
+    println();
+    println(" Common arguments: ", ConsoleColor.White, ConsoleColor.Blue);
+    printch("  --verbose ", ConsoleColor.Green); println(": Print verbose output");
+    printch("  --dir     ", ConsoleColor.Green); println(": [path]   Set working directory");
+    printch("  --where   ", ConsoleColor.Green); println(": [field] [condition] [value] [and/or] [field] [condition] [value] ...   Filter repositories with conditions");
+    println("    Fields: path, url, branch");
+    println("    Conditions: ct (contains), sw (starts with), ew (ends with), eq (equals), !ct (not contains), !sw (not starts with), !ew (not ends with), !eq (not equals)");
+    println("    Conjunctions: and, or");
+    println("    The comprassion is not case sensitive.");
+    printch("    Example ", ConsoleColor.Green); println(": --where path eq \"C:\\Projects\" and branch eq \"master\" or url sw \"http://\"");
+    println();
+    println(" Commands: ", ConsoleColor.White, ConsoleColor.Blue);
+    printch("  pwd         ", ConsoleColor.Green); println(": Print current directory", ConsoleColor.Cyan);
+    printch("  pull        ", ConsoleColor.Green); println(": Pull all git repositories in the current directory", ConsoleColor.Cyan);
+    printch("  branches    ", ConsoleColor.Green); println(": List current branches in the current directory", ConsoleColor.Cyan);
+    println("    Options:", ConsoleColor.DarkGray);
+    println("      --all       Also list all other local branches for each repository", ConsoleColor.DarkGray);
+    println("      --fetch     Fetch all branches from remote before list", ConsoleColor.DarkGray);
+    println("      -a          [With --all parameter] List all local and remote branches", ConsoleColor.DarkGray);
+    println("      -r          [With --all parameter] List remote branches only", ConsoleColor.DarkGray);
+    printch("  urls        ", ConsoleColor.Green); println(": List all urls in the current directory", ConsoleColor.Cyan);
+    println("    Options:", ConsoleColor.DarkGray);
+    println("      --with-directory   Print directory path with urls", ConsoleColor.DarkGray);
+    printch("  fetch       ", ConsoleColor.Green); println(": Fetch all branches in the current directory", ConsoleColor.Cyan);
+    printch("  status      ", ConsoleColor.Green); println(": Show status of repositories  in the current directory that action needed", ConsoleColor.Cyan);
+    printch("  stashes     ", ConsoleColor.Green); println(": List repositories that has stashes with stash names", ConsoleColor.Cyan);
+    printch("  switch      ", ConsoleColor.Green); println(": Switch all repositories to the given branch", ConsoleColor.Cyan);
+    println("    Arguments:", ConsoleColor.DarkGray);
+    println("      [branchName]   Branch name to switch all repositories", ConsoleColor.DarkGray);
+    println();
+    println(" Examples: ", ConsoleColor.White, ConsoleColor.Blue);
+    println("  bulk-git pull --verbose", ConsoleColor.Yellow);
+    println("  bulk-git branches", ConsoleColor.Yellow);
+    println("  bulk-git branches --all", ConsoleColor.Yellow);
+    println("  bulk-git branches --all --fetch", ConsoleColor.Yellow);
+    println("  bulk-git branches -a", ConsoleColor.Yellow);
+    println("  bulk-git branches -r", ConsoleColor.Yellow);
+    println("  bulk-git branches --all -a", ConsoleColor.Yellow);
+    println("  bulk-git branches --all -a --fetch", ConsoleColor.Yellow);
+    println("  bulk-git branches --all -r", ConsoleColor.Yellow);
+    println("  bulk-git urls --with-directory", ConsoleColor.Yellow);
+    println("  bulk-git fetch", ConsoleColor.Yellow);
+    println(@"  bulk-git status --dir ""C:\Path to working directory\sources""", ConsoleColor.Yellow);
+    println();
     resetColor();
 }
 void pwd()
@@ -508,7 +525,7 @@ void stashes()
         else
         {
             var stdOud = (r.StdOut ?? "").Trim(' ', '\r', '\n');
-            if (string.IsNullOrEmpty(stdOud) )
+            if (string.IsNullOrEmpty(stdOud))
             {
                 continue;
             }
