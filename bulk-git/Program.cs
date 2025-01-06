@@ -195,6 +195,9 @@ switch (args[0])
     case "branches":
         branches();
         break;
+    case "stashes":
+        stashes();
+        break;
     case "urls":
         urls();
         break;
@@ -213,6 +216,9 @@ switch (args[0])
         printHelp();
         break;
 }
+
+
+
 resetColor();
 return;
 void printHelp()
@@ -240,6 +246,7 @@ void printHelp()
     Console.ForegroundColor = ConsoleColor.Cyan;
     Console.WriteLine("  fetch       Fetch all branches in the current directory");
     Console.WriteLine("  status      Show status of repositories  in the current directory that action needed");
+    Console.WriteLine("  stashes     List reposştories that has stashes with stash names");
     Console.WriteLine("  switch      Switch all repositories to the given branch");
     Console.ForegroundColor = ConsoleColor.DarkGray;
     Console.WriteLine("    Arguments:");
@@ -482,6 +489,33 @@ void pull()
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("[Success]");
+            resetColor();
+        }
+    }
+}
+void stashes()
+{
+    var directories = _getDirectories();
+    foreach (var gitDirectory in directories)
+    {
+        var r = runCommand("git", $"-C {gitDirectory} stash list", gitDirectory, _printVerbose);
+        if (r.ExitCode != 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(r.StdErr);
+            resetColor();
+        }
+        else
+        {
+            var stdOud = (r.StdOut ?? "").Trim(' ', '\r', '\n');
+            if (string.IsNullOrEmpty(stdOud) )
+            {
+                continue;
+            }
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine($"{gitDirectory}");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(r.StdOut);
             resetColor();
         }
     }

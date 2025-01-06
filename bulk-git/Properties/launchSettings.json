@@ -3,6 +3,10 @@
     "bulk-git": {
       "commandName": "Project",
       "commandLineArgs": "branches  --where path eq \"C:\\Projects\" and branch eq \"master\" or url sw  --dir c:\\NanodemsV2"
+    },
+    "stashes": {
+      "commandName": "Project",
+      "commandLineArgs": "stashes --dir c:\\NanodemsV2"
     }
   }
 }
